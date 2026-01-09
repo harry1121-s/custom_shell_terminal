@@ -12,6 +12,42 @@ const rl = readline.createInterface({
 //     console.log(`${command}: command not found`);
 // }
 
+const tokenize = (line) => {
+  const args = [];
+  let currentArg = "";
+  let inSingleQuote = false;
+  let hasArg = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+
+    if (char === "'") {
+      inSingleQuote = !inSingleQuote;
+      hasArg = true; // Even '' (empty quotes) count as starting an argument
+      continue;
+    }
+
+    if (char === " " && !inSingleQuote) {
+      if (hasArg) {
+        args.push(currentArg);
+        currentArg = "";
+        hasArg = false;
+      }
+      continue;
+    }
+
+    currentArg += char;
+    hasArg = true;
+  }
+
+  if (hasArg) {
+    args.push(currentArg);
+  }
+
+  return args;
+};
+
+
 const handleExit = () => {
   rl.close();
   process.exit(0);
@@ -106,7 +142,8 @@ const commandBuiltin = {
 
 const ask = () => {
   rl.question("$ ", (answer) => {
-    const parts = answer.split(" ").filter(p => p !== "");
+    const parts = tokenize(answer);
+    // const parts = answer.split(" ").filter(p => p !== "");
     if (parts.length === 0) {
       ask();
       return;
