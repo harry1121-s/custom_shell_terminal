@@ -23,11 +23,11 @@ const tokenize = (line) => {
 
     if (char === "'") {
       inSingleQuote = !inSingleQuote;
-      hasArg = true; // Even '' (empty quotes) count as starting an argument
+      hasArg = true;
       continue;
     }
 
-    if (char === " " && !inSingleQuote) {
+    if ((char === " " || char === "\t") && !inSingleQuote) {
       if (hasArg) {
         args.push(currentArg);
         currentArg = "";
@@ -43,7 +43,7 @@ const tokenize = (line) => {
   if (hasArg) {
     args.push(currentArg);
   }
-
+  console.log(args);
   return args;
 };
 
@@ -98,7 +98,7 @@ const handleCd = (args) => {
   }
 
   let dir = args[0];
-  if(dir == "~") {
+  if (dir == "~") {
     dir = process.env.HOME;
   }
   try {
