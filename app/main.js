@@ -16,18 +16,25 @@ const tokenize = (line) => {
   const args = [];
   let currentArg = "";
   let inSingleQuote = false;
+  let inDoubleQuote = false;
   let hasArg = false;
 
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
 
-    if (char === "'") {
+    if (char === "'" && !inDoubleQuote) {
       inSingleQuote = !inSingleQuote;
       hasArg = true;
       continue;
     }
 
-    if ((char === " " || char === "\t") && !inSingleQuote) {
+    if (char === '"' && !inSingleQuote) {
+      inDoubleQuote = !inDoubleQuote;
+      hasArg = true;
+      continue;
+    }
+
+    if ((char === " " || char === "\t") && !inSingleQuote && !inDoubleQuote) {
       if (hasArg) {
         args.push(currentArg);
         currentArg = "";
@@ -43,7 +50,6 @@ const tokenize = (line) => {
   if (hasArg) {
     args.push(currentArg);
   }
-  console.log(args);
   return args;
 };
 
